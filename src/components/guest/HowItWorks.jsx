@@ -18,7 +18,7 @@ const howItWorks = [
   {
     step: "Step-3",
     title: "Find & Match Jobs",
-    description:"AI finds jobs posted directly on Jobarman and opportunities sourced from trusted employers and job boards — all in one place. AI matches them to your skills",
+    description: "AI finds jobs posted directly on Jobarman and opportunities sourced from trusted employers and job boards — all in one place. AI matches them to your skills",
     icon: PlusCircle,
   },
   {
@@ -29,8 +29,8 @@ const howItWorks = [
   },
   {
     step: "Step-5",
-    title: "Receive Interviews",
-    description: "Relax while employers review your application and reach out directly to you for next steps and interviews.",
+    title: "Connect With Employers",
+    description: "Employers review your application and may contact you directly regarding interviews and next steps.",
     icon: Headset,
   },
 ];
@@ -45,8 +45,7 @@ export default function HowItWorks() {
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-balance">
             Jobarman simplifies hiring with easy job posting, AI-powered
-            screening, and smart applicant management. From posting to
-            onboarding, everything happens seamlessly.
+            screening, and smart applicant management. From discovering opportunities to submitting applications and tracking your progress, Jobarman makes the job search simpler.
           </p>
         </div>
 

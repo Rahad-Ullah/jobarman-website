@@ -14,7 +14,7 @@ export default async function Subscription() {
           </h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {subscriptions?.map((plan, index) => (
             <SubscriptionCard key={index} plan={plan} />
           ))}
