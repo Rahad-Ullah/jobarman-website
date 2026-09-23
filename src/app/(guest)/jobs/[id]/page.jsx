@@ -1,8 +1,6 @@
 import JobsDetailsLeft from "@/components/guest/jobs/JobsDetailsSidebar";
 import JobDetailsRight from "@/components/guest/jobs/JobDetailsRight";
 import { myFetch } from "../../../../../utils/myFetch";
-import HeroBanner from "@/components/cui/HeroBaner";
-import { formatUrl } from "../../../../../utils/formatUrl";
 
 export default async function JobDetailsPage({ params }) {
   const { id } = await params;
@@ -11,8 +9,6 @@ export default async function JobDetailsPage({ params }) {
     method: "GET",
     tags: ["edit-job"],
   });
-
-  console.log("get  post data", res.data);
 
   return (
     <div className="min-h-screen bg-gray-50">

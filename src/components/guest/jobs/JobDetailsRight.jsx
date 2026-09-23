@@ -115,23 +115,19 @@ export default function JobDetailsRight({ details }) {
                   {details?.recruiter?.name || details?.recruiter_company}
                 </Link>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
-                    Job Type :
-                  </span>
+              <div className="flex flex-col gap-1 mt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 text-sm">Job Type:</span>
                   <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
                     {toUnCapilizeSentence(details?.job_type)}
                   </span>
                 </div>
-                {
-                  <p className="text-gray-400 text-md mt-1">
-                    Job Board :{" "}
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
-                      {details?.job_board || "Jobarman"}
-                    </span>
-                  </p>
-                }
+                <div className="text-gray-400 text-md mt-1 flex items-center gap-2">
+                  <span className="text-gray-700 text-sm">Application Source:</span>
+                  <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
+                    {details?.job_board || "Jobarman"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -156,13 +152,13 @@ export default function JobDetailsRight({ details }) {
                   }
                 />
               </button>
-              {!details?.job_url ? (
+              {!details?.is_third_party_job ? (
                 <>
                   <JobApplyModal
                     details={details}
                     trigger={
-                      <span className="px-5 py-2 bg-blue-600 cursor-pointer text-white text-nowrap rounded-lg hover:bg-blue-700 transition font-semibold inline-flex items-center gap-2">
-                        Apply Now <ArrowRight size={18} />
+                      <span className="px-5 py-2 bg-blue-600 cursor-pointer text-white text-nowrap rounded-lg hover:bg-blue-700 transition font-medium inline-flex items-center gap-2">
+                        Apply on Jobarman <ArrowRight size={18} />
                       </span>
                     }
                   />
@@ -171,9 +167,9 @@ export default function JobDetailsRight({ details }) {
                 <>
                   <button
                     onClick={() => redirectToExternalLink(details?.job_url)}
-                    className="px-5 py-2 bg-blue-600 cursor-pointer text-white text-nowrap rounded-lg hover:bg-blue-700 transition font-semibold inline-flex items-center gap-2"
+                    className="px-5 py-2 bg-blue-600 cursor-pointer text-white text-nowrap rounded-lg hover:bg-blue-700 transition font-medium inline-flex items-center gap-2"
                   >
-                    Apply Now <ArrowRight size={18} />
+                    Apply on Employer Website <ArrowRight size={18} />
                   </button>
                 </>
               )}
