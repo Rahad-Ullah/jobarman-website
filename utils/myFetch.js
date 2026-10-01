@@ -4,7 +4,7 @@ import { getToken } from "./getToken";
 
 export const myFetch = async (
   url,
-  { method = "GET", body, tags, token, headers = {}, cache = "no-store" } = {}
+  { method = "GET", body, tags, token, headers = {}, cache, revalidate } = {}
 ) => {
   const accessToken = await getToken();
 
@@ -19,14 +19,27 @@ export const myFetch = async (
     ...(token ? { Authorization: `${token}` } : {}),
   };
 
+  const nextOptions = {};
+  if (tags) nextOptions.tags = tags;
+  if (typeof revalidate === "number") nextOptions.revalidate = revalidate;
+
+  const fetchOptions = {
+    method,
+    headers: reqHeaders,
+    ...(hasBody && { body: isFormData ? body : JSON.stringify(body) }),
+    ...(Object.keys(nextOptions).length > 0 && { next: nextOptions }),
+  };
+
+  if (cache) {
+    fetchOptions.cache = cache;
+  } else if (revalidate === undefined && method === "GET") {
+    fetchOptions.cache = "no-store";
+  } else if (method !== "GET") {
+    fetchOptions.cache = "no-store";
+  }
+
   try {
-    const response = await fetch(`${process.env.BASE_URL}${url}`, {
-      method,
-      headers: reqHeaders,
-      ...(hasBody && { body: isFormData ? body : JSON.stringify(body) }),
-      ...(tags && { next: { tags } }),
-      ...(!(method === "GET") ? { cache: "no-store" } : { cache }),
-    });
+    const response = await fetch(`${process.env.BASE_URL}${url}`, fetchOptions);
 
     const data = await response.json();
 

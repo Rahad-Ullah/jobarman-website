@@ -1,4 +1,4 @@
-"use server";
+import { Suspense } from "react";
 import Link from "next/link";
 import ResumeGenerator from "../../../shared/ResumeGenerator";
 import Review from "@/components/guest/Review";
@@ -12,9 +12,9 @@ import Image from "next/image";
 import HowItWorks from "@/components/guest/HowItWorks";
 import Categories from "@/components/guest/Categories";
 import RecruiterHero from "@/components/cui/RecruiterHero";
+import SectionLoader from "@/components/guest/SectionLoader";
 import { getUserRole } from "../../../utils/getUserRole";
 import { idRecruiter } from "../../../utils/matchUserRole";
-import { redirect } from "next/navigation";
 
 
 export default async function Home({ searchParams }) {
@@ -45,10 +45,34 @@ export default async function Home({ searchParams }) {
       {/* <FilterModal /> */}
 
       {/* Recent Job Post Section */}
-      {existRecruiter && <RecentJobPost />}
+      {existRecruiter && (
+        <Suspense
+          fallback={
+            <SectionLoader
+              title="Recent Job Post"
+              subtitle="Discover Jobs That Truly Match Your Skills And Goals. Connect With Top Employers And Take The Next Step In Your Career Effortlessly."
+              label="Loading recent job posts..."
+            />
+          }
+        >
+          <RecentJobPost />
+        </Suspense>
+      )}
 
       {/* Recent Job Request Section */}
-      {existRecruiter && <RecentJobRequest />}
+      {existRecruiter && (
+        <Suspense
+          fallback={
+            <SectionLoader
+              title="Recent Job Request"
+              subtitle="Discover Jobs That Truly Match Your Skills And Goals. Connect With Top Employers And Take The Next Step In Your Career Effortlessly."
+              label="Loading recent job requests..."
+            />
+          }
+        >
+          <RecentJobRequest />
+        </Suspense>
+      )}
 
       {/* Who’s Hiring Right Now banner */}
       {existRecruiter && (
@@ -86,11 +110,34 @@ export default async function Home({ searchParams }) {
       )}
 
       {/* Job Categories Section */}
-      {!existRecruiter && <Categories />}
+      {!existRecruiter && (
+        <Suspense
+          fallback={
+            <SectionLoader
+              title="Job Category"
+              label="Loading categories..."
+            />
+          }
+        >
+          <Categories />
+        </Suspense>
+      )}
 
       {/* Social Proof Section */}
       {/* Join over 1,000,000 professionals */}
-      {!existRecruiter && <Review />}
+      {!existRecruiter && (
+        <Suspense
+          fallback={
+            <SectionLoader
+              title="Join Professionals Using Jobarman"
+              subtitle="To Search Through 275,000+ Aggregated Jobs."
+              label="Loading reviews..."
+            />
+          }
+        >
+          <Review />
+        </Suspense>
+      )}
 
       {/* Resume Score Generator Section */}
       {!existRecruiter && <ResumeGenerator />}
@@ -133,7 +180,17 @@ export default async function Home({ searchParams }) {
       )}
 
       {/* Subscription Plan Section */}
-      <Subscription />
+      <Suspense
+        fallback={
+          <SectionLoader
+            title="Subscription Plan"
+            titleColor="text-[#123499]"
+            label="Loading subscription plans..."
+          />
+        }
+      >
+        <Subscription />
+      </Suspense>
     </main>
   );
 }

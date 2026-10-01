@@ -4,7 +4,10 @@ import Link from "next/link";
 import { myFetch } from "../../../utils/myFetch";
 
 export default async function Review() {
-  const res = await myFetch("/review?limit=8");
+  const res = await myFetch("/review?limit=8", {
+    revalidate: 3600,
+    tags: ["reviews"],
+  });
 
   return (
     <section className="py-16 sm:py-24 bg-white">

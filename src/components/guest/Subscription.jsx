@@ -2,7 +2,10 @@ import SubscriptionCard from "../shared/SubscriptionCard";
 import { myFetch } from "../../../utils/myFetch";
 
 export default async function Subscription() {
-  const res = await myFetch("/package");
+  const res = await myFetch("/package", {
+    revalidate: 3600,
+    tags: ["packages"],
+  });
   const subscriptions = res?.data;
 
   return (

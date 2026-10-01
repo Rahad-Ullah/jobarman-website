@@ -7,8 +7,10 @@ import { myFetch } from "../../../utils/myFetch";
 
 
 export default async function Categories() {
-  const res = await myFetch("/job-category?limit=6");
-  // console.log("aadsvasdvbabd  +++++>>", res)
+  const res = await myFetch("/job-category?limit=6", {
+    revalidate: 3600,
+    tags: ["categories"],
+  });
 
   return (
     <section className="py-16 sm:py-24 bg-white">
@@ -24,7 +26,7 @@ export default async function Categories() {
               id={category._id}
               icon={category.image}
               label={category.name}
-              count={category.count}
+              count={category.jobs ?? category.count}
             />
           ))}
         </div>

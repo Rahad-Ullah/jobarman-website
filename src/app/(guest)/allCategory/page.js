@@ -19,7 +19,10 @@ const jobCategories = [
 ];
 
 const AllCategory = async () => {
-  const res = await myFetch("/job-category");
+  const res = await myFetch("/job-category", {
+    revalidate: 3600,
+    tags: ["categories"],
+  });
   return (
     <section className="py-16 sm:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,7 +38,7 @@ const AllCategory = async () => {
               id={category._id}
               icon={category.image}
               label={category.name}
-              count={category.count}
+              count={category.jobs ?? category.count}
             />
           ))}
         </div>
