@@ -72,11 +72,7 @@ export default function JobDetailsRight({ details }) {
   const redirectToExternalLink = async (url) => {
     const res = await getToken()
     const isEmpployee = await isEmployee();
-    console.log({
-      Token: res,
-      isEmpployee: isEmpployee,
-      id: params?.id
-    })
+    
     if (isEmpployee && res) {
       window.open(url, "_blank");
     } else {

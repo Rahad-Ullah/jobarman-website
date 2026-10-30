@@ -9,11 +9,11 @@ import Link from "next/link";
 import React from "react";
 import { idRecruiter } from "../../../../utils/matchUserRole";
 import { myFetch } from "../../../../utils/myFetch";
+import { toUnCapilizeSentence } from "../../../../utils/textFormat";
+import formatSalaryAmount from "../../../../utils/formatSalaryAmount";
 
 export default async function JobsDetailsLeft({ details }) {
-  console.log({details})
-  const {data} = await myFetch(`/job-post/match-percentage/${details?. _id}`,{method: "GET"});
-  console.log({matchPercentage: data})
+  const { data } = await myFetch(`/job-post/match-percentage/${details?._id}`, { method: "GET" });
 
   return (
     <div className="lg:col-span-1">
@@ -48,8 +48,8 @@ export default async function JobsDetailsLeft({ details }) {
             <div className="flex flex-col items-start p-3">
               <Briefcase size={24} className="text-blue-600 mb-2" />
               <span className="text-gray-600">Job Level:</span>
-              <span className="font-semibold text-gray-900">
-                {details?.job_level}
+              <span className="font-semibold text-gray-900 capitalize">
+                {toUnCapilizeSentence(details?.job_level || '')}
               </span>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default async function JobsDetailsLeft({ details }) {
               <DollarSign size={24} className="text-blue-600 mb-2" />
               <span className="text-gray-600">Salary</span>
               <span className="font-semibold text-gray-900">
-                ${details?.min_salary}- ${details?.max_salary}
+                {formatSalaryAmount(details?.min_salary)} - {formatSalaryAmount(details?.max_salary)}
               </span>
             </div>
             <div className="flex flex-col items-start p-3">
