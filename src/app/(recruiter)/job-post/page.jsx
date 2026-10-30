@@ -442,6 +442,7 @@ function EditJobPostForm() {
             <SkillsInput
               skills={responsibilities}
               setSkills={setResponsibilities}
+              placeholder="Add a responsibility"
             />
           </div>
 
