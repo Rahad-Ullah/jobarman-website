@@ -1,12 +1,19 @@
 import AddNewResumeForm2 from "@/components/addNewResumeForm/AddResume";
 import React from "react";
 
-const AddNewResume = async () => {
+export const metadata = {
+  title: "Build Resume | Jobarman",
+  description:
+    "Create and customize your professional resume with Jobarman's resume builder.",
+};
+
+const AddNewResume = () => {
   return (
-    <div className="bg-[#FBFBFB]">
+    <main className="bg-[#F8FAFC] min-h-screen py-6 px-3 sm:px-6">
       <AddNewResumeForm2 />
-    </div>
+    </main>
   );
 };
 
 export default AddNewResume;
+
