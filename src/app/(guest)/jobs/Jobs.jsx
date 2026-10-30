@@ -60,13 +60,18 @@ const JobCardSkeleton = () => (
 
 /* ================= component ================= */
 
-const Jobs = ({ favoritesList, initialJobs = [], initialTotalPages = 1 }) => {
+const Jobs = ({
+  favoritesList,
+  initialJobs = [],
+  initialTotalPages = 1,
+  initialTotal = 0,
+}) => {
   const { filters, setFilters, resetFilters } = useFilters();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [jobs, setJobs] = useState(initialJobs);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [totalItems, setTotalItems] = useState(initialTotal);
   const { searchTerm, location, category, job_type, experience_level, date_posted, tags, minPrice, maxPrice } = filters;
 
   const page = searchParams.get("page") || 1;
@@ -117,6 +122,7 @@ const Jobs = ({ favoritesList, initialJobs = [], initialTotalPages = 1 }) => {
         ...(dateLimit && { dateLimit }),
         ...(tags && { tags }),
         page,
+        limit: "20",
       });
 
       const jobsRes = await clientFetch(
@@ -130,16 +136,19 @@ const Jobs = ({ favoritesList, initialJobs = [], initialTotalPages = 1 }) => {
       if (jobsRes?.success) {
         setJobs(jobsRes?.data || []);
         setTotalPages(jobsRes?.pagination?.totalPage || 1);
+        setTotalItems(jobsRes?.pagination?.total || 0);
         scrollToTop(300);
       } else {
         setJobs([]);
         setTotalPages(1);
+        setTotalItems(0);
       }
     } catch (error) {
       if (controller.signal.aborted) return;
       console.error("Error fetching jobs data:", error);
       setJobs([]);
       setTotalPages(1);
+      setTotalItems(0);
     } finally {
       if (!controller.signal.aborted) {
         setLoading(false);
@@ -205,7 +214,13 @@ const Jobs = ({ favoritesList, initialJobs = [], initialTotalPages = 1 }) => {
                     />
                   ))}
                 </div>
-                {jobs.length > 0 && <CustomPagination totalPages={totalPages} />}
+                {jobs.length > 0 && (
+                  <CustomPagination
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemLabel="jobs"
+                  />
+                )}
               </>
             ) : (
               <div className="min-h-[calc(100vh-300px)] flex items-start justify-center relative">

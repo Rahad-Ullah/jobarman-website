@@ -5,7 +5,11 @@ import Jobs from "./Jobs";
 
 /* ================= component ================= */
 
-const JobsPage = async () => {
+const JobsPage = async ({ searchParams }) => {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const page = resolvedParams?.page || 1;
+  const limit = resolvedParams?.limit || 20;
+
   // Fetch favourites and initial jobs in parallel on the server
   const [favRes, jobsRes] = await Promise.all([
     myFetch("/favourite", {
@@ -13,7 +17,7 @@ const JobsPage = async () => {
       cache: "no-store",
       tags: ["favoritesList"],
     }),
-    myFetch("/job-post/feed?page=1", {
+    myFetch(`/job-post/feed?page=${page}&limit=${limit}`, {
       method: "GET",
     }),
   ]);
@@ -26,6 +30,7 @@ const JobsPage = async () => {
         favoritesList={refineFavLists}
         initialJobs={jobsRes?.data || []}
         initialTotalPages={jobsRes?.pagination?.totalPage || 1}
+        initialTotal={jobsRes?.pagination?.total || 0}
       />
     </>
   );
