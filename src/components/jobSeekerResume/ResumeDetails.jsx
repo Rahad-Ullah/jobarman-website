@@ -16,10 +16,11 @@ import {
   Award,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function ResumeDetails({ resume }) {
   const divRef = useRef(null);
+  const [isDownloading, setIsDownloading] = useState(false);
   const {
     full_name,
     address,
@@ -30,60 +31,79 @@ export default function ResumeDetails({ resume }) {
     clearance,
   } = resume.personalInfo || {};
 
-
   const handleDownload = async () => {
-    const element = divRef.current;
-    element.setAttribute("data-pdf", "true");
+    try {
+      setIsDownloading(true);
+      const element = divRef.current;
+      element.setAttribute("data-pdf", "true");
 
-    const canvas = await html2canvas(element, {
-      scale: 2, // sharp output, non-negotiable
-      useCORS: true,
-    });
+      const canvas = await html2canvas(element, {
+        scale: 2, // sharp output, non-negotiable
+        useCORS: true,
+      });
 
-    element.removeAttribute("data-pdf");
+      element.removeAttribute("data-pdf");
 
-    const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png");
 
-    // A4 PDF (210 × 297 mm)
-    const pdf = new jsPDF({
-      orientation: "p",
-      unit: "mm",
-      format: "a4",
-    });
+      // A4 PDF (210 × 297 mm)
+      const pdf = new jsPDF({
+        orientation: "p",
+        unit: "mm",
+        format: "a4",
+      });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();   // 210
-    const pdfHeight = pdf.internal.pageSize.getHeight(); // 297
+      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297
 
-    const imgWidthPx = canvas.width;
-    const imgHeightPx = canvas.height;
+      const imgWidthPx = canvas.width;
+      const imgHeightPx = canvas.height;
 
-    // Convert px → mm (jsPDF uses mm)
-    const pxToMm = 0.264583; // standard conversion
-    const imgWidthMm = imgWidthPx * pxToMm;
-    const imgHeightMm = imgHeightPx * pxToMm;
+      // Convert px → mm (jsPDF uses mm)
+      const pxToMm = 0.264583; // standard conversion
+      const imgWidthMm = imgWidthPx * pxToMm;
+      const imgHeightMm = imgHeightPx * pxToMm;
 
-    // Scale to fit A4 while preserving aspect ratio
-    const scale = Math.min(
-      pdfWidth / imgWidthMm,
-      pdfHeight / imgHeightMm
-    );
+      // Scale to fit A4 while preserving aspect ratio
+      const scale = Math.min(
+        pdfWidth / imgWidthMm,
+        pdfHeight / imgHeightMm
+      );
 
-    const finalWidth = imgWidthMm * scale;
-    const finalHeight = imgHeightMm * scale;
+      const finalWidth = imgWidthMm * scale;
+      const finalHeight = imgHeightMm * scale;
 
-    // Center content
-    const x = (pdfWidth - finalWidth) / 2;
-    // const y = (pdfHeight - finalHeight) / 2;
-    const y = 10; // start 10mm from top
+      // Center content
+      const x = (pdfWidth - finalWidth) / 2;
+      const y = 10; // start 10mm from top
 
-    pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight);
-    pdf.save("payment-details-a4.pdf");
+      pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight);
+
+      // Set download filename matching resume name (BUG-013 fix)
+      const rawName =
+        resume?.resume_name ||
+        resume?.name ||
+        (full_name ? `${full_name} Resume` : "Resume");
+      const sanitizedName =
+        rawName.replace(/[/\\?%*:|"<>]/g, "_").trim() || "Resume";
+
+      pdf.save(`${sanitizedName}.pdf`);
+    } catch (err) {
+      console.error("Failed to generate and download resume PDF:", err);
+    } finally {
+      setIsDownloading(false);
+    }
   };
-
 
   return (
     <div className="relative">
-      <button className="absolute top-4 right-4 text-gray-600 hover:text-blue-600 font-semibold transition-colors duration-300" onClick={handleDownload}>Download</button>
+      <button
+        disabled={isDownloading}
+        className="absolute top-4 right-4 text-gray-600 hover:text-blue-600 font-semibold transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+        onClick={handleDownload}
+      >
+        {isDownloading ? "Downloading..." : "Download"}
+      </button>
       <div ref={divRef} className="h-full overflow-y-auto bg-white rounded-lg p-4 sm:p-5 lg:p-6 space-y-5 sm:space-y-6">
         {/* ==== Contact ==== */}
         <div className="border-b border-gray-300 pb-4 sm:pb-5">

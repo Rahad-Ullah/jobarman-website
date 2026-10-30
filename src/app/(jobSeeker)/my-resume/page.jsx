@@ -32,7 +32,23 @@ export default async function MyResume({ searchParams }) {
 
           <div className="lg:col-span-2">
             {resumeDetails?.data ? (
-              <>{resumeDetails?.data?.is_external_resume ? <div><PdfViewer fileUrl={formatUrl(resumeDetails?.data?.pdf)} /></div> : <div><ResumeDetails resume={resumeDetails.data} /></div>}</>
+              <>
+                {resumeDetails?.data?.is_external_resume ? (
+                  <div>
+                    <PdfViewer
+                      fileUrl={formatUrl(resumeDetails?.data?.pdf)}
+                      fileName={
+                        resumeDetails?.data?.resume_name ||
+                        resumeDetails?.data?.name
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <ResumeDetails resume={resumeDetails.data} />
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex items-center justify-center h-full text-gray-500">
                 <p className="text-lg">

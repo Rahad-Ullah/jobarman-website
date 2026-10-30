@@ -7,7 +7,7 @@ import { formatUrl } from "utils/formatUrl";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export default function PdfViewer({ fileUrl, isDownloadable = true }) {
+export default function PdfViewer({ fileUrl, fileName, isDownloadable = true }) {
   const [numPages, setNumPages] = useState(null);
   const [width, setWidth] = useState(800);
 
@@ -37,21 +37,53 @@ export default function PdfViewer({ fileUrl, isDownloadable = true }) {
 
   const lowerUrl = (fileUrl || "").toLowerCase();
   const isWordDoc = lowerUrl.endsWith(".doc") || lowerUrl.endsWith(".docx");
+  const ext = isWordDoc
+    ? lowerUrl.endsWith(".docx")
+      ? ".docx"
+      : ".doc"
+    : ".pdf";
+
+  const sanitizedFileName = fileName
+    ? `${fileName.replace(/[/\\?%*:|"<>]/g, "_").trim()}${ext}`
+    : `resume${ext}`;
+
+  const handleDownloadClick = async (e) => {
+    if (!downloadUrl) return;
+    try {
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = sanitizedFileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.download = sanitizedFileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
 
   return (
     <div>
       {isDownloadable && !isWordDoc && (
         <div className="flex justify-end mb-3">
-          <a
-            href={downloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
+          <button
+            type="button"
+            onClick={handleDownloadClick}
             className="bg-[#FF5900] hover:bg-[#FF5900]/90 text-white font-semibold py-2 px-4 rounded flex items-center gap-2 transition-colors shadow-sm"
           >
             <Download className="w-4 h-4" />
             <span>Download</span>
-          </a>
+          </button>
         </div>
       )}
 
@@ -66,16 +98,14 @@ export default function PdfViewer({ fileUrl, isDownloadable = true }) {
           <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
             In-browser preview is only supported for PDF documents. You can download and open your Word resume file (.doc / .docx) directly.
           </p>
-          <a
-            href={downloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
+          <button
+            type="button"
+            onClick={handleDownloadClick}
             className="inline-flex items-center gap-2 bg-[#FF5900] hover:bg-[#FF5900]/90 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors shadow-sm"
           >
             <Download className="w-5 h-5" />
             <span>Download Resume Document</span>
-          </a>
+          </button>
         </div>
       ) : (
         <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
@@ -95,16 +125,14 @@ export default function PdfViewer({ fileUrl, isDownloadable = true }) {
                 <p className="text-xs text-gray-400 mb-4">
                   Please download the file using the button below to view it.
                 </p>
-                <a
-                  href={downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
+                <button
+                  type="button"
+                  onClick={handleDownloadClick}
                   className="inline-flex items-center gap-2 bg-[#FF5900] hover:bg-[#FF5900]/90 text-white text-sm font-semibold py-2 px-4 rounded transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download File</span>
-                </a>
+                </button>
               </div>
             }
           >
